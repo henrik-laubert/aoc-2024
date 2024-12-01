@@ -17,25 +17,20 @@ fun main() {
 
   fun part1(input: List<String>): Int {
     val numbers = castInput(input)
-    val temp = numbers.second.sorted()
 
-    return numbers.first.sorted().foldIndexed(0) { index, acc, i ->
-      acc + abs(i - temp[index])
-    }
+    return numbers.first.sorted()
+      .zip(numbers.second.sorted())
+      .sumOf { abs(it.first - it.second) }
   }
 
   fun part2(input: List<String>): Int {
     val numbers = castInput(input)
     val count = numbers.second.groupingBy { it }.eachCount()
 
-    return numbers.first.fold(0) { acc, i ->
-      acc + i * count.getOrDefault(i, 0)
-    }
+    return numbers.first.sumOf { it * (count[it] ?: 0) }
   }
 
   val testInput = readInput("Day01_test")
-  part1(testInput).println()
-  part2(testInput).println()
   check(part1(testInput) == 11)
   check(part2(testInput) == 31)
 

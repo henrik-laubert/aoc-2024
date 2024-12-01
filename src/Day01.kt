@@ -2,17 +2,11 @@ import kotlin.math.abs
 
 fun main() {
   fun castInput(input: List<String>): Pair<List<Int>, List<Int>> {
-    val list1 = mutableListOf<Int>()
-    val list2 = mutableListOf<Int>()
-
-    for (line in input) {
-      if (line.isBlank()) continue
-      val values = line.split("   ").map(String::toInt)
-      list1.add(values[0])
-      list2.add(values[1])
-    }
-
-    return Pair(list1, list2)
+    return (if (input.last().isBlank()) input.dropLast(1) else input )
+      .map {
+        val values = it.split("   ").map(String::toInt)
+        values[0] to values[1]
+      }.unzip()
   }
 
   fun part1(input: List<String>): Int {
@@ -34,7 +28,7 @@ fun main() {
   check(part1(testInput) == 11)
   check(part2(testInput) == 31)
 
-  val input = readInput("Day01").dropLast(1)
+  val input = readInput("Day01")
   part1(input).println()
   part2(input).println()
 }

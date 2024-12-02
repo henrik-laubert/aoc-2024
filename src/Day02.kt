@@ -12,12 +12,9 @@ fun main() {
   fun checkReport(report: List<Int>): Boolean {
     val asc = report[0] < report[1]
 
-    for (i in 1..report.lastIndex) {
-      if (abs(report[i-1] - report[i]) !in 1..3 || (asc != report[i-1] < report[i])) {
-        return false
-      }
+    return report.zipWithNext().all {
+      abs(it.first - it.second) in 1..3 && asc == it.first < it.second
     }
-    return true
   }
 
   fun part1(input: List<String>): Int {
@@ -28,22 +25,11 @@ fun main() {
 
   fun part2(input: List<String>): Int {
     val reports = castInput(input)
-    var saveCount = 0
-
-    for (report in reports) {
-      if (checkReport(report)) saveCount++
-      else {
-        for (i in report.indices) {
-          val temp = report.toMutableList().also { it.removeAt(i) }
-          if (checkReport(temp)) {
-            saveCount++
-            break
-          }
-        }
+    return reports.count {
+      checkReport(it) || it.indices.any { i ->
+        checkReport(it.toMutableList().apply { removeAt(i) })
       }
     }
-
-    return saveCount
   }
 
   val testInput = readInput("Day02_test")

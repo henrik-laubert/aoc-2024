@@ -1,14 +1,4 @@
-typealias Coordinates = Pair<Int,Int>
-
 fun main() {
-
-  operator fun Coordinates.plus(other: Coordinates): Coordinates {
-    return Coordinates(this.first + other.first, this.second + other.second)
-  }
-
-  operator fun Coordinates.minus(other: Coordinates): Coordinates {
-    return Coordinates(this.first - other.first, this.second - other.second)
-  }
 
   fun parseInput(input: List<String>): Map<String, List<Coordinates>> {
     val antennas = mutableMapOf<String, MutableList<Coordinates>>()

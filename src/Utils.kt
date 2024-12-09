@@ -19,3 +19,13 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
  * The cleaner shorthand for printing output.
  */
 fun Any?.println() = println(this)
+
+typealias Coordinates = Pair<Int,Int>
+
+operator fun Coordinates.plus(other: Coordinates): Coordinates {
+    return Coordinates(this.first + other.first, this.second + other.second)
+}
+
+operator fun Coordinates.minus(other: Coordinates): Coordinates {
+    return Coordinates(this.first - other.first, this.second - other.second)
+}

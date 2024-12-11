@@ -9,9 +9,10 @@ fun main()  {
   }
 
   fun split(number: String): Pair<Long, Long> {
+    val m = number.length/2
     return Pair(
-      number.substring(0, number.length/2).toLong(),
-      number.substring(number.length/2, number.length).toLong()
+      number.substring(0, m).toLong(),
+      number.substring(m, number.length).toLong()
     )
   }
 
@@ -19,13 +20,13 @@ fun main()  {
     val next = mutableMapOf<Long, Long>()
     current.forEach { (key, count) ->
       if (key == 0L) {
-       next[1] = next.getOrDefault(1, 0) + count
+        next[1] = next[1]?.plus(count) ?: count
       } else if (key.toString().length % 2 == 0 && key.toString().length > 1) {
-        val temp = split(key.toString())
-        next[temp.first] = next.getOrDefault(temp.first, 0) + count
-        next[temp.second] = next.getOrDefault(temp.second, 0) + count
+        val (first, second) = split(key.toString())
+        next[first] = next[first]?.plus(count) ?: count
+        next[second] = next[second]?.plus(count) ?: count
       } else {
-       next[key * 2024] = next.getOrDefault(key * 2024, 0) + count
+       next[key * 2024] = next[key * 2024]?.plus(count) ?: count
       }
     }
     return next

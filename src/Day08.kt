@@ -16,11 +16,11 @@ fun main() {
   }
 
   fun directionVector(a: Coordinates, b: Coordinates): Coordinates {
-    return Coordinates(b.first - a.first, b.second - a.second)
+    return Coordinates(b.x - a.x, b.y - a.y)
   }
 
   fun coodinatesInGrid(input: List<String>, coordinates: Coordinates): Boolean {
-    return coordinates.first in input.indices && coordinates.second in 0 until input.first().length
+    return coordinates.x in input.indices && coordinates.y in 0 until input.first().length
   }
 
   fun part1(input: List<String>): Int {

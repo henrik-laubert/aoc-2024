@@ -16,7 +16,7 @@ fun main() {
   }
 
   fun getElementAt(input: List<List<Int>>, pos: Coordinates): Int? {
-    return input.getOrNull(pos.first)?.getOrNull(pos.second)
+    return input.getOrNull(pos.x)?.getOrNull(pos.y)
   }
 
   fun traverse(input: List<List<Int>>, thisRef: Coordinates): List<Coordinates> {
@@ -26,10 +26,10 @@ fun main() {
     val result = mutableListOf<Coordinates>()
 
     val neighbors = listOf(
-      thisRef.copy(first = thisRef.first - 1), // up
-      thisRef.copy(first = thisRef.first + 1), // down
-      thisRef.copy(second = thisRef.second - 1), // left
-      thisRef.copy(second = thisRef.second + 1)  // right
+      thisRef.copy(x = thisRef.x - 1), // up
+      thisRef.copy(x = thisRef.x + 1), // down
+      thisRef.copy(y = thisRef.y - 1), // left
+      thisRef.copy(y = thisRef.y + 1)  // right
     )
 
     neighbors.forEach { neighbor ->

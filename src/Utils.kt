@@ -84,3 +84,8 @@ enum class Direction(val dx: Int, val dy: Int) {
         val diagonal = listOf(UPRIGHT, DOWNRIGHT, DOWNLEFT, UPLEFT)
     }
 }
+
+operator fun Pair<Long,Long>.times(n: Long): Pair<Long,Long> = first * n to second * n
+operator fun Pair<Long,Long>.plus(n: Pair<Long,Long>): Pair<Long,Long> = first + n.first to second + n.second
+operator fun Pair<Long,Long>.plus(n: Long): Pair<Long,Long> = first + n to second + n
+operator fun Pair<Long,Long>.rem(other: Pair<Long,Long>): Pair<Long,Long> = first % other.first to second % other.second

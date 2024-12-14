@@ -54,13 +54,15 @@ fun main()  {
     }
 
   fun part2(input: List<String>,gridSize: Pair<Long, Long>): Int {
-    val robots = parseInput(input)
-    var seconds = -1
+    var robots = parseInput(input)
+    var seconds = 0
 
     do {
+      robots = robots.map { (p, v) ->
+        positionInGrid(computePosition(p, v, 1), gridSize) to v
+      }
       seconds++
-      val positions = robots.map { positionInGrid(computePosition(it.first, it.second, seconds), gridSize) }
-    } while (!hasEasterEgg(positions))
+    } while (!hasEasterEgg(robots.unzip().first))
 
     return seconds
   }

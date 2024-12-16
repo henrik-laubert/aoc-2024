@@ -61,6 +61,7 @@ class Grid<T>(val values: MutableList<T>, val rowLength: Int) : Iterable<T> by v
         pos.x in 0 until rowLength && pos.y in 0 until values.size/rowLength
 
     operator fun set(index: Int, value: T) = values.set(index, value)
+    operator fun set(pos: Coordinates, value: T) = values.set(pos.toIndex(), value)
 }
 
 fun List<String>.flatten(): List<String> =
@@ -85,7 +86,16 @@ enum class Direction(val dx: Int, val dy: Int) {
     }
 }
 
+fun Direction.opposite(): Direction =
+    Direction.entries.first { it.dx == -this.dx && it.dy == -this.dy }
+
 operator fun Pair<Long,Long>.times(n: Long): Pair<Long,Long> = first * n to second * n
 operator fun Pair<Long,Long>.plus(n: Pair<Long,Long>): Pair<Long,Long> = first + n.first to second + n.second
 operator fun Pair<Long,Long>.plus(n: Long): Pair<Long,Long> = first + n to second + n
 operator fun Pair<Long,Long>.rem(other: Pair<Long,Long>): Pair<Long,Long> = first % other.first to second % other.second
+
+fun List<String>.getCoordinatesOf(char: Char): Coordinates {
+    return this.indexOfFirst { char in it }.let {
+        Coordinates(this[it].indexOf(char), it)
+    }
+}

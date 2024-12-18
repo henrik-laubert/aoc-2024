@@ -25,6 +25,14 @@ fun List<String>.parseDigits(): List<List<Int>> {
   }
 }
 
+fun <A, B>List<String>.divideInput(
+  predicate: (String) -> Boolean = { it.isBlank() },
+  parse: (Pair<List<String>, List<String>>) -> Pair<A, B>
+): Pair<A, B> {
+  val mid = this.indexOfFirst(predicate)
+  return parse(this.subList(0, mid) to this.subList(mid + 1, this.size))
+}
+
 /**
  * Converts string to md5 hash.
  */

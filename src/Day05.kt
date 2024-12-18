@@ -2,15 +2,6 @@ import kotlin.math.floor
 
 fun main() {
 
-  fun parseInput(input: List<String>): Pair<List<Pair<Int, Int>>, List<List<Int>>> {
-    val rules = input.subList(0, input.indexOf(""))
-      .map { it.split("|").let { (first, second) -> first.toInt() to second.toInt() } }
-    val updates = input.subList(input.indexOf("") + 1, input.size)
-      .map { it.split(",").map(String::toInt) }
-
-    return Pair(rules, updates)
-  }
-
   fun updateIsValid(update: List<Int>, rules: List<Pair<Int, Int>>): Boolean {
     return update.all { page ->
       rules.filter { it.first == page && it.second in update }
@@ -40,25 +31,29 @@ fun main() {
   }
 
   fun part1(input: List<String>): Int {
-    val (rules, updates) = parseInput(input)
+    val (rules, updates) = input.divideInput {
+      it.first.parseDigitPairs() to it.second.parseDigits()
+    }
 
     return updates.filter { updateIsValid(it, rules) }
       .sumOf { it[floor(it.size / 2F).toInt()] }
   }
 
   fun part2(input: List<String>): Int {
-    val (rules, updates) = parseInput(input)
+    val (rules, updates) = input.divideInput {
+      it.first.parseDigitPairs() to it.second.parseDigits()
+    }
 
     return updates.filterNot { updateIsValid(it, rules) }
       .map { fixUpdate(it, rules) }
       .sumOf { it[floor(it.size / 2F).toInt()] }
   }
 
-  val testInput = readInput("Day05_test")
+  val testInput = readInput("inputs/Day05_test")
   check(part1(testInput) == 143)
   check(part2(testInput) == 123)
 
-  val input = readInput("Day05")
+  val input = readInput("inputs/Day05")
   part1(input).println()
   part2(input).println()
 }

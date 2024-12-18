@@ -1,3 +1,5 @@
+import kotlin.math.abs
+
 fun main() {
 
   fun parseInput(input: List<String>): Map<String, List<Coordinates>> {
@@ -7,7 +9,7 @@ fun main() {
       line.forEachIndexed { j, char ->
         if (char != '.') {
           antennas.getOrPut(char.toString()) { mutableListOf() }
-            .add(Coordinates(i, j))
+            .add(Coordinates(j, i))
         }
       }
     }
@@ -15,63 +17,53 @@ fun main() {
     return antennas
   }
 
-  fun directionVector(a: Coordinates, b: Coordinates): Coordinates {
-    return Coordinates(b.x - a.x, b.y - a.y)
-  }
-
-  fun coodinatesInGrid(input: List<String>, coordinates: Coordinates): Boolean {
-    return coordinates.x in input.indices && coordinates.y in 0 until input.first().length
-  }
-
   fun part1(input: List<String>): Int {
     val antennas = parseInput(input)
-    val antinodes = mutableSetOf<Coordinates>()
+    val antiNodes = mutableSetOf<Coordinates>()
 
     antennas.keys.forEach { type ->
       antennas[type]!!.forEachIndexed { i, antenna ->
-        for (j in i+1 until antennas[type]!!.size) {
+        for (j in i+1..antennas[type]!!.lastIndex) {
           val v = directionVector(antenna, antennas[type]!![j])
-          antinodes.addAll(listOf(antenna - v, antennas[type]!![j] + v))
+          antiNodes.addAll(listOf(antenna - v, antennas[type]!![j] + v))
         }
       }
     }
 
-    return antinodes.filter { coodinatesInGrid(input,it) }.size
+    return antiNodes.filter { it.inBounds(input.gridSize()) }.size
   }
 
   fun part2(input: List<String>): Int {
     val antennas = parseInput(input)
-    val antinodes = mutableSetOf<Coordinates>()
+    val antiNodes = mutableSetOf<Coordinates>()
+
+    val gridSize = input.gridSize()
 
     antennas.keys.forEach { type ->
       antennas[type]!!.forEachIndexed { i, antenna ->
         for (j in i+1 until antennas[type]!!.size) {
           val other = antennas[type]!![j]
           val v = directionVector(antenna, other)
-          antinodes.addAll(listOf(antenna, other))
 
-          var nextBackwards = antenna - v
-          while (coodinatesInGrid(input, nextBackwards)) {
-            antinodes.add(nextBackwards)
-            nextBackwards -= v
-          }
-          var nextForwards = other + v
-          while (coodinatesInGrid(input,nextForwards)) {
-            antinodes.add(nextForwards)
-            nextForwards += v
-          }
+          val back = -(antenna.x / abs(v.x))
+          val forward = ((gridSize.first - antenna.x) / abs(v.x)) + 2
+          val newNodes = (back..forward).map { k ->
+            antenna + (v * k)
+          }.filter { it.inBounds(gridSize) }
+
+          antiNodes.addAll(newNodes)
         }
       }
     }
 
-    return antinodes.size
+    return antiNodes.size.also { it.println() }
   }
 
-  val testInput = readInput("Day08_test")
-  check(part1(testInput) == 14)
+  val testInput = readInput("inputs/Day08_test")
+  check(part1(testInput).also { it.println() } == 14)
   check(part2(testInput) == 34)
 
-  val input = readInput("Day08")
+  val input = readInput("inputs/Day08")
   part1(input).println()
   part2(input).println()
 }

@@ -70,12 +70,20 @@ data class Coordinates(val x : Int, val y : Int) {
 
   constructor(pair: Pair<Int, Int>) : this(pair.first, pair.second)
 
+  fun inBounds(end: Pair<Int, Int>): Boolean {
+    return this.x in 0..end.first && this.y in 0..end.second
+  }
+
   operator fun plus(other: Coordinates): Coordinates {
     return Coordinates(this.x + other.x, this.y + other.y)
   }
 
   operator fun minus(other: Coordinates): Coordinates {
     return Coordinates(this.x - other.x, this.y - other.y)
+  }
+
+  operator fun times(n: Int): Coordinates {
+    return Coordinates(this.x * n, this.y * n)
   }
 
   operator fun plus(other: Direction): Coordinates {
@@ -89,10 +97,9 @@ data class Coordinates(val x : Int, val y : Int) {
 
 fun Pair<Int, Int>.toCoordinates() = Coordinates(this)
 
-fun Coordinates.inBounds(end: Pair<Int, Int>): Boolean {
-  return this.x in 0..end.first && this.y in 0..end.second
+fun directionVector(a: Coordinates, b: Coordinates): Coordinates {
+  return b - a
 }
-
 class Grid<T>(val values: MutableList<T>, val rowLength: Int) : Iterable<T> by values {
 
   private fun Coordinates.toIndex(): Int = this.y * rowLength + this.x

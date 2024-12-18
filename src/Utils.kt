@@ -18,6 +18,13 @@ fun List<String>.parseDigitPairs(): List<Pair<Int,Int>> {
   }
 }
 
+fun List<String>.parseDigits(): List<List<Int>> {
+  return this.map { line ->
+    digitRegex.findAll(line).flatMap { it.destructured.toList() }
+      .map(String::toInt).toList()
+  }
+}
+
 /**
  * Converts string to md5 hash.
  */

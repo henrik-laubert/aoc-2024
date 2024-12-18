@@ -1,5 +1,5 @@
 
-fun main()  {
+fun main() {
 
   fun parseInput(input: List<String>): List<Coordinates> =
     input.map { it.split(",").map(String::toInt) }
@@ -10,7 +10,7 @@ fun main()  {
   }
 
   fun shortestPaths(
-    start: Coordinates = Coordinates(0,0),
+    start: Coordinates = Coordinates(0, 0),
     end: Coordinates,
     obstacles: List<Coordinates>
   ): List<List<Coordinates>> {
@@ -38,33 +38,50 @@ fun main()  {
     return results
   }
 
-  fun part1(input: List<String>, bytes: Int, memorySize: Pair<Int,Int>): Int {
+  fun part1(input: List<String>, bytes: Int, memorySize: Pair<Int, Int>): Int {
     val corrupted = parseInput(input).take(bytes)
 
     return shortestPaths(end = Coordinates(memorySize), obstacles = corrupted).first().size - 1
   }
 
-  fun part2(input: List<String>, bytes: Int, memorySize: Pair<Int,Int>): Pair<Int,Int> {
+  fun part2(input: List<String>, memorySize: Pair<Int, Int>): Pair<Int, Int> {
     val corrupted = parseInput(input)
-    var counter = bytes
 
-    var paths = shortestPaths(end = Coordinates(memorySize), obstacles = corrupted.take(counter))
+    val result = corrupted.binarySearchFirst {
+      shortestPaths(end = Coordinates(memorySize), obstacles = corrupted.take(corrupted.indexOf(it) + 1))
+        .isEmpty()
+    }!!
 
-    while (paths.isNotEmpty()) {
-      while (paths.none { corrupted[counter - 1] in it })  {
-        counter++
-      }
-      paths = shortestPaths(end = Coordinates(memorySize), obstacles = corrupted.take(counter))
-    }
-
-    return corrupted[counter - 1].x to corrupted[counter - 1].y
+    return corrupted[result].x to corrupted[result].y
   }
 
   val testInput = readInput("inputs/Day18_test")
   check(part1(testInput, 12, 6 to 6).also { println(it) } == 22)
-  check(part2(testInput, 12, 6 to 6).also { println(it) } == 6 to 1)
+  check(part2(testInput, 6 to 6).also { println(it) } == 6 to 1)
 
   val input = readInput("inputs/Day18")
   part1(input, 1024, 70 to 70).println()
-  part2(input, 1024, 70 to 70).println()
+  part2(input, 70 to 70).println()
+}
+
+fun <T> List<T>.binarySearchFirst(
+  fromIndex: Int = 0,
+  toIndex: Int = size,
+  predicate: (T) -> Boolean
+): Int? {
+  var start = fromIndex
+  var end = toIndex
+  var result: Int? = null
+
+  while (start <= end) {
+    val mid = start + (end - start) / 2
+    if (predicate(this[mid])) {
+      result = mid
+      end = mid - 1
+    } else {
+      start = mid + 1
+    }
+  }
+
+  return result
 }

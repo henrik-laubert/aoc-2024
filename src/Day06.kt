@@ -1,80 +1,67 @@
 fun main() {
 
-  operator fun Pair<Int,Int>.plus(other: Pair<Int, Int>): Pair<Int,Int> {
-    return first + other.first to second + other.second
-  }
+  fun computePath(
+    start: Coordinates,
+    obstacles: List<Coordinates>,
+    gridSize: Pair<Int, Int>,
+    direction: Direction = Direction.UP
+  ): List<Pair<Coordinates,Direction>> {
+    var current = start
+    var currentDirection = direction
+    val visitedWithDirection = mutableListOf(start to direction)
 
-  fun parseInput(input: List<String>): List<List<String>> {
-    return input.map { it.split("").filterNot { char -> char.isBlank() } }
-  }
-
-  fun getObstacles(input: List<List<String>>): List<Pair<Int,Int>>{
-    val obstacles = mutableListOf<Pair<Int,Int>>()
-
-    input.forEachIndexed { row, str ->
-      str.forEachIndexed { col, value ->
-        if (value == "#") {
-          obstacles.add(col to row)
-        }
-      }
-    }
-
-    return obstacles
-  }
-
-  fun getStartPos(input: List<List<String>>): Pair<Int,Int> {
-    val row = input.indexOfFirst { "^" in it }
-    return input[row].indexOf("^") to row
-  }
-
-  fun computePath(input: List<List<String>>): List<Pair<Pair<Int,Int>,Pair<Int,Int>>> {
-    val obstacles = getObstacles(input)
-
-    var current = getStartPos(input)
-    var direction = 0 to -1
-
-    val visitedWithDirection = mutableListOf(current to direction)
-
-    while ((current + direction).second in input.indices && (current + direction).first in 0 .. input.first().lastIndex) {
-      if((current + direction) in obstacles) {
-        direction = direction.copy(first = -direction.second, second = direction.first)
+    while ((current + currentDirection).inBounds(gridSize)) {
+      if((current + currentDirection) in obstacles) {
+        currentDirection = currentDirection.rotate()
       } else {
-        current += direction
-        if ((current to direction) in visitedWithDirection) throw Exception("is Loop")
-        visitedWithDirection.add(current to direction)
+        current += currentDirection
+        if ((current to currentDirection) in visitedWithDirection) throw Exception("is Loop")
+        visitedWithDirection.add(current to currentDirection)
       }
     }
 
     return visitedWithDirection
   }
 
-  fun part1(input: List<List<String>>): Int {
-    return computePath(input).map { it.first }.toSet().size
+  fun part1(input: List<String>): Int {
+    val obstacles = input.getCoordinatesOf { it == '#' }.map{ it.toCoordinates() }
+    val start = input.getCoordinatesOfFirst('^').toCoordinates()
+
+    return computePath(start, obstacles, input.gridSize())
+      .map { it.first }.toSet().size
   }
 
-  fun part2(input: List<List<String>>): Int {
-    val path = computePath(input)
-    val newObstacles = mutableSetOf<Pair<Int,Int>>()
-    path.drop(1).map { it.first }.toSet().forEachIndexed { index, (col, row) ->
-      try {
-        val newInput = input.map { it.toMutableList() }
-        if(newInput[row][col] != "^") {
-          newInput[row][col] = "#"
-          computePath(newInput)
+  fun part2(input: List<String>): Int {
+
+    val obstacles = input.getCoordinatesOf { it == '#' }.map{ it.toCoordinates() }
+    val start = input.getCoordinatesOfFirst('^').toCoordinates()
+
+    val path = computePath(start, obstacles, input.gridSize())
+
+    val newObstacles = mutableSetOf<Coordinates>()
+    path.forEachIndexed { index, (pos, dir) ->
+      if (index != 0) {
+        try {
+          computePath(
+            path[index-1].first,
+            obstacles + pos,
+            input.size to input.first().length,
+             path[index-1].second
+          )
+        } catch (e: Exception){
+          newObstacles.add(pos)
         }
-      } catch (e: Exception){
-        newObstacles.add(col to row)
       }
     }
 
     return newObstacles.size
   }
 
-  val testInput = parseInput(readInput("Day06_test"))
+  val testInput = readInput("inputs/Day06_test")
   check(part1(testInput) == 41)
   check(part2(testInput) == 6)
 
-  val input = parseInput(readInput("Day06"))
+  val input = readInput("inputs/Day06")
   part1(input).println()
   part2(input).println()
 }

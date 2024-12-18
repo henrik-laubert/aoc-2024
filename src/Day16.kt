@@ -2,8 +2,8 @@
 fun main()  {
 
   fun parseInput(input: List<String>): Triple<Coordinates, Coordinates, Grid<String>> {
-    val start = input.getCoordinatesOf('S')
-    val end = input.getCoordinatesOf('E')
+    val start = input.getCoordinatesOfFirst('S').toCoordinates()
+    val end = input.getCoordinatesOfFirst('E').toCoordinates()
 
     return Triple(start, end, input.toGrid())
   }

@@ -25,13 +25,34 @@ fun List<String>.parseDigits(): List<List<Int>> {
   }
 }
 
-fun <A, B>List<String>.divideInput(
+fun <A, B> List<String>.divideInput(
   predicate: (String) -> Boolean = { it.isBlank() },
   parse: (Pair<List<String>, List<String>>) -> Pair<A, B>
 ): Pair<A, B> {
   val mid = this.indexOfFirst(predicate)
   return parse(this.subList(0, mid) to this.subList(mid + 1, this.size))
 }
+
+fun List<String>.getCoordinatesOf(predicate: (Char) -> Boolean): Set<Pair<Int,Int>> {
+  val results = mutableSetOf<Pair<Int,Int>>()
+
+  this.forEachIndexed { y, line ->
+    line.forEachIndexed { x, char ->
+      if (predicate(char)) {results.add(x to y) }
+    }
+  }
+
+  return results
+}
+
+fun List<String>.getCoordinatesOfFirst(char: Char): Pair<Int,Int> {
+  return this.indexOfFirst { char in it }.let {
+    this[it].indexOf(char) to it
+  }
+}
+
+fun List<String>.gridSize(): Pair<Int,Int> =
+ this.first().lastIndex to lastIndex
 
 /**
  * Converts string to md5 hash.
@@ -44,7 +65,6 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
  * The cleaner shorthand for printing output.
  */
 fun Any?.println() = println(this)
-
 
 data class Coordinates(val x : Int, val y : Int) {
 
@@ -65,6 +85,12 @@ data class Coordinates(val x : Int, val y : Int) {
   operator fun minus(other: Direction): Coordinates {
     return Coordinates(this.x - other.dx, this.y - other.dy)
   }
+}
+
+fun Pair<Int, Int>.toCoordinates() = Coordinates(this)
+
+fun Coordinates.inBounds(end: Pair<Int, Int>): Boolean {
+  return this.x in 0..end.first && this.y in 0..end.second
 }
 
 class Grid<T>(val values: MutableList<T>, val rowLength: Int) : Iterable<T> by values {
@@ -113,13 +139,27 @@ enum class Direction(val dx: Int, val dy: Int) {
 fun Direction.opposite(): Direction =
   Direction.entries.first { it.dx == -this.dx && it.dy == -this.dy }
 
-operator fun Pair<Long,Long>.times(n: Long): Pair<Long,Long> = first * n to second * n
-operator fun Pair<Long,Long>.plus(n: Pair<Long,Long>): Pair<Long,Long> = first + n.first to second + n.second
-operator fun Pair<Long,Long>.plus(n: Long): Pair<Long,Long> = first + n to second + n
-operator fun Pair<Long,Long>.rem(other: Pair<Long,Long>): Pair<Long,Long> = first % other.first to second % other.second
-
-fun List<String>.getCoordinatesOf(char: Char): Coordinates {
-  return this.indexOfFirst { char in it }.let {
-    Coordinates(this[it].indexOf(char), it)
-  }
+fun Direction.rotate(clockwise: Boolean = true): Direction {
+  return if (clockwise) Direction.entries.first { this.dx == it.dy && this.dy == -it.dx }
+  else Direction.entries.first { it.dx == this.dy && it.dy == this.dx }
 }
+
+fun Direction.toPair(): Pair<Int, Int> = this.dx to this.dy
+
+@Suppress("UNCHECKED_CAST")
+operator fun <T: Number, U: Number> Pair<T, T>.plus(n: U): Pair<T, T> =
+  (first.toLong() + n.toLong()) as T to (second.toLong() + n.toLong()) as T
+
+@Suppress("UNCHECKED_CAST")
+operator fun <T: Number, U: Number> Pair<T, T>.plus(other: Pair<U, U>): Pair<T, T> =
+  (first.toLong() + other.first.toLong()) as T to (second.toLong() + other.second.toLong()) as T
+
+@Suppress("UNCHECKED_CAST")
+operator fun <T: Number, U: Number> Pair<T, T>.times(n: U): Pair<T, T> =
+  (first.toLong() * n.toLong()) as T to (second.toLong() * n.toLong()) as T
+
+@Suppress("UNCHECKED_CAST")
+operator fun <T: Number, U: Number> Pair<T, T>.rem(other: Pair<U, U>): Pair<T, T> =
+  (first.toLong() % other.first.toLong()) as T to (second.toLong() % other.second.toLong()) as T
+
+operator fun<T: Number> Pair<T, T>.plus(direction: Direction): Pair<T, T> = this + direction.toPair()

@@ -2,6 +2,8 @@ import kotlin.math.abs
 
 fun main() {
 
+  //TODO: extract
+  //TODO: define against free tiles not obstacles?
   fun shortestPaths(
     start: Coordinates = Coordinates(0, 0),
     end: Coordinates,
@@ -68,6 +70,7 @@ fun main() {
 
     val default = shortestPaths(start, end, gridSize, walls).first()
 
+    //TODO: extract
     val shortcuts = default.flatMap { c ->
       default.mapNotNull { end ->
         if (c.distance(end) in 2..20)
@@ -89,5 +92,5 @@ fun main() {
 
   val input = readInput("inputs/Day20")
   part1(input).println()
-  part2(input).println() //998607 to low
+  part2(input).println()
 }

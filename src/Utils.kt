@@ -2,6 +2,7 @@ import java.math.BigInteger
 import java.security.MessageDigest
 import kotlin.io.path.Path
 import kotlin.io.path.readText
+import kotlin.math.abs
 
 /**
  * Reads lines from the given input txt file.
@@ -93,6 +94,10 @@ data class Coordinates(val x : Int, val y : Int) {
   operator fun minus(other: Direction): Coordinates {
     return Coordinates(this.x - other.dx, this.y - other.dy)
   }
+
+  fun distance(other: Coordinates): Int {
+    return abs(x - other.x) + abs(y - other.y)
+  }
 }
 
 fun Pair<Int, Int>.toCoordinates() = Coordinates(this)
@@ -108,6 +113,9 @@ class Grid<T>(val values: MutableList<T>, val rowLength: Int) : Iterable<T> by v
   fun getOrNull(pos: Coordinates): T? =
     if (isInBounds(pos)) values[pos.toIndex()] else null
 
+  fun coordinatesOf(element: T): Coordinates =
+    indexToCoordinates(values.indexOf(element))
+
   fun getNeighbors(pos: Coordinates, directions: List<Direction>): List<T?> =
     directions.map { dir -> getOrNull(pos + dir) }
 
@@ -121,8 +129,9 @@ class Grid<T>(val values: MutableList<T>, val rowLength: Int) : Iterable<T> by v
   operator fun set(pos: Coordinates, value: T) = values.set(pos.toIndex(), value)
 }
 
-fun List<String>.flatten(): List<String> =
-  this.joinToString("").split("").filter { it.isNotBlank() }
+fun List<String>.flatten(): List<String> {
+  return this.joinToString("").split("").filter { it.isNotEmpty() }
+}
 
 fun List<String>.toGrid(): Grid<String> =
   Grid(this.flatten().toMutableList(), this.first().length)
@@ -136,6 +145,16 @@ enum class Direction(val dx: Int, val dy: Int) {
   DOWNLEFT(-1,1),
   LEFT(-1, 0),
   UPLEFT(-1,-1);
+
+  override fun toString(): String {
+    return when(this) {
+      UP -> "^"
+      RIGHT -> ">"
+      DOWN -> "v"
+      LEFT -> "<"
+      else -> TODO()
+    }
+  }
 
   companion object {
     val cardinal = listOf(UP, RIGHT, DOWN, LEFT)

@@ -1,6 +1,22 @@
 
 fun main() {
 
+  class Graph<T>(val edges: List<Pair<T,T>>)  {
+    val vertexSet by lazy {
+      edges.flatMap { listOf(it.first, it.second) }.toSet()
+    }
+
+    private val _cache = HashMap<T, Set<T>>()
+
+    fun getNeighbours(vertex: T): Set<T> {
+      return _cache.getOrPut(vertex) {
+        edges.filter { it.first == vertex || it.second == vertex }
+          .map { if(it.first == vertex) it.second else it.first }
+          .toSet()
+      }
+    }
+  }
+
   fun part1(input: List<String>): Int {
     val edges = input.map { line -> line.split("-")}.map { it[0] to it[1] }
 
@@ -22,19 +38,7 @@ fun main() {
       }
     }
 
-    return triples.filter { group -> group.size == 3 && group.any {'t' == it.first()}}.size
-  }
-
-  class Graph<T>(val edges: List<Pair<T,T>>)  {
-    val vertexSet by lazy {
-      edges.flatMap { listOf(it.first, it.second) }.toSet()
-    }
-
-    fun getNeighbours(vertex: T): Set<T> {
-      return edges.filter { it.first == vertex || it.second == vertex }
-        .map { if(it.first == vertex) it.second else it.first }
-        .toSet()
-    }
+    return triples.count { group -> group.any {'t' == it.first() } }
   }
 
   fun part2(input: List<String>): String {

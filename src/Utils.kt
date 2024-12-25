@@ -189,3 +189,11 @@ operator fun <T: Number, U: Number> Pair<T, T>.rem(other: Pair<U, U>): Pair<T, T
   (first.toLong() % other.first.toLong()) as T to (second.toLong() % other.second.toLong()) as T
 
 operator fun<T: Number> Pair<T, T>.plus(direction: Direction): Pair<T, T> = this + direction.toPair()
+
+inline fun <T> withMeasuredTime(name: String = "measured code block", block: () -> T): T {
+  val start = System.currentTimeMillis()
+  val result = block()
+  val end = System.currentTimeMillis()
+  println("""Execution time of "$name": ${end-start} ms """)
+  return result
+}

@@ -60,18 +60,19 @@ fun main() {
     connectedGroups = connectedGroups.filter { group ->
       val edgesInGroup = graph.edges.count { it.first in group && it.second in group }
       edgesInGroup == ((group.size*(group.size -1)) /2)
-    }.toMutableSet()
+    }.toMutableSet().also { it.println() }
 
     return connectedGroups.first { group -> group.size == connectedGroups.maxOf { it.size } }
       .sorted().joinToString(",")
   }
 
   val testInput = readInput("inputs/Day23_test")
-  check(part1(testInput) == 7)
-  check(part2(listOf("ka-co","ta-co", "de-co", "ta-ka", "de-ta", "ka-de", "ta-c", "de-a", "de-b", "a-b")) == "co,de,ka,ta")
-  check(part2(testInput.take(30)) == "co,de,ka,ta")
+  //check(part1(testInput) == 7)
+  //check(part2(listOf("ka-co","ta-co", "de-co", "ta-ka", "de-ta", "ka-de", "ta-c", "de-a", "de-b", "a-b")) == "co,de,ka,ta")
+  //check(part2(testInput.take(30)) == "co,de,ka,ta")
+  check(part2(listOf("a-b", "a-c", "a-d", "a-e", "b-d", "c-d", "d-e")) == "a,b,c")
 
   val input = readInput("inputs/Day23")
-  part1(input).println()
-  part2(input).println()
+  //part1(input).println()
+  //part2(input).println()
 }

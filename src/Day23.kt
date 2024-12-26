@@ -50,11 +50,19 @@ fun main() {
     graph.vertexSet.forEach { current ->
       val neighbours = graph.getNeighbours(current)
 
+      val candidates = mutableSetOf(neighbours + current)
+
       neighbours.forEach { neighbour ->
-        connectedGroups.add(
-          (neighbours + current).filter { it in graph.getNeighbours(neighbour)}.toSet() + neighbour
-        )
+        for (i in candidates.indices) {
+          candidates.add(candidates.elementAt(i) intersect graph.getNeighbours(neighbour) + neighbour)
+        }
+        //connectedGroups.add(
+        //  (neighbours intersect graph.getNeighbours(neighbour)) + neighbour
+        //)
       }
+
+      connectedGroups.addAll(candidates.filter { it.size > 2 })
+
     }
 
     connectedGroups = connectedGroups.filter { group ->
@@ -70,7 +78,14 @@ fun main() {
   //check(part1(testInput) == 7)
   //check(part2(listOf("ka-co","ta-co", "de-co", "ta-ka", "de-ta", "ka-de", "ta-c", "de-a", "de-b", "a-b")) == "co,de,ka,ta")
   //check(part2(testInput.take(30)) == "co,de,ka,ta")
-  check(part2(listOf("a-b", "a-c", "a-d", "a-e", "b-d", "c-d", "d-e")) == "a,b,c")
+  check(part2(
+    listOf(
+      "a-b", "a-c", "a-d", "a-e", "a-f", "a-g",
+      "b-c", "b-d", "b-e", "b-f", "b-h",
+      "c-d", "c-e", "c-g", "c-h",
+      "d-g", "d-h", "d-f"
+    )
+  ) == "a,b,c,e")
 
   val input = readInput("inputs/Day23")
   //part1(input).println()

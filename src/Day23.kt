@@ -46,11 +46,12 @@ fun main() {
     val graph = Graph(edges)
 
     var connectedGroups = mutableSetOf<Set<String>>()
+    val connectedGroups = mutableSetOf<Set<String>>()
 
     graph.vertexSet.forEach { current ->
       val neighbours = graph.getNeighbours(current)
 
-      val candidates = mutableSetOf(neighbours + current)
+      var candidates = mutableSetOf(neighbours + current)
 
       neighbours.forEach { neighbour ->
         for (i in candidates.indices) {
@@ -61,14 +62,26 @@ fun main() {
         //)
       }
 
-      connectedGroups.addAll(candidates.filter { it.size > 2 })
+      candidates = candidates.filter { group ->
+        val edgesInGroup = graph.edges.count { it.first in group && it.second in group }
+        edgesInGroup == ((group.size*(group.size -1)) /2) && group.size >= 3
+      }.toMutableSet()
 
+      candidates = candidates.filter { candidate ->
+        candidates.none { it intersect candidate == candidate && it != candidate}
+      }.toMutableSet()
+
+      connectedGroups.addAll(candidates)
     }
 
     connectedGroups = connectedGroups.filter { group ->
       val edgesInGroup = graph.edges.count { it.first in group && it.second in group }
       edgesInGroup == ((group.size*(group.size -1)) /2)
     }.toMutableSet().also { it.println() }
+    //connectedGroups = connectedGroups.filter { group ->
+    //  val edgesInGroup = graph.edges.count { it.first in group && it.second in group }
+    //  edgesInGroup == ((group.size*(group.size -1)) /2)
+    //}.toMutableSet()
 
     return connectedGroups.first { group -> group.size == connectedGroups.maxOf { it.size } }
       .sorted().joinToString(",")
@@ -85,7 +98,15 @@ fun main() {
       "c-d", "c-e", "c-g", "c-h",
       "d-g", "d-h", "d-f"
     )
-  ) == "a,b,c,e")
+  ) == "a,b,c,d")
+  check(part2(
+    listOf(
+      "a-b", "a-c", "a-d", "a-e", "a-f", "a-g",
+      "b-c", "b-d", "b-e", "b-h", "b-i",
+      "c-d", "c-f", "c-i", "c-j",
+      "d-g", "d-h", "d-j"
+    )
+  ) == "a,b,c,d")
 
   val input = readInput("inputs/Day23")
   //part1(input).println()

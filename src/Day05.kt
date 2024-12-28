@@ -1,3 +1,7 @@
+import utils.divideInput
+import utils.parseDigitPairs
+import utils.parseDigits
+import utils.readInput
 import kotlin.math.floor
 
 fun main() {

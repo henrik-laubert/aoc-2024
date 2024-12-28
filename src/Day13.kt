@@ -1,3 +1,4 @@
+import utils.readInput
 import kotlin.math.roundToLong
 
 fun main()  {

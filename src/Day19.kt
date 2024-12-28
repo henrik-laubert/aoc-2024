@@ -1,3 +1,5 @@
+import utils.divideInput
+import utils.readInput
 
 fun main() {
   val cache = mutableMapOf<String, Long>()

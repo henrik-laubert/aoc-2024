@@ -1,3 +1,5 @@
+import utils.readInput
+
 fun main() {
 
   fun parseInput(input: List<String>): List<List<String>> {

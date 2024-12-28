@@ -1,3 +1,5 @@
+import utils.getCoordinatesOfFirst
+import utils.readInput
 
 fun main()  {
 

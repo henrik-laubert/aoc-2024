@@ -1,3 +1,7 @@
+import utils.getCoordinatesOf
+import utils.getCoordinatesOfFirst
+import utils.gridSize
+import utils.readInput
 import kotlin.math.abs
 
 fun main() {

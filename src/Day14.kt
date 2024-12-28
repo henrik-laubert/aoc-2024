@@ -1,3 +1,4 @@
+import utils.readInput
 import kotlin.math.floor
 
 enum class Quadrants { I, II, III, IV; }

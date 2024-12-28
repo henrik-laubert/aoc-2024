@@ -1,3 +1,8 @@
+import utils.getCoordinatesOf
+import utils.getCoordinatesOfFirst
+import utils.gridSize
+import utils.readInput
+
 fun main() {
 
   fun computePath(

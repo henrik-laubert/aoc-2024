@@ -1,3 +1,5 @@
+import utils.readInput
+
 fun main() {
 
   fun computeMul(string: String): Int {

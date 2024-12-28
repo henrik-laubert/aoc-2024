@@ -1,7 +1,8 @@
+import utils.parseDigitPairs
+import utils.readInput
 import kotlin.math.abs
 
 fun main() {
-
   fun part1(input: List<String>): Int {
     val (first, second) = input.parseDigitPairs().unzip()
 
@@ -24,5 +25,4 @@ fun main() {
   val input = readInput("inputs/Day01")
   part1(input).println()
   part2(input).println()
-
 }

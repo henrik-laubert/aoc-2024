@@ -1,3 +1,6 @@
+import utils.divideInput
+import utils.readInput
+
 private enum class GateType {
   AND, OR, XOR;
 }
